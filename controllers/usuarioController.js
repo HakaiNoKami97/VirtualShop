@@ -1,46 +1,79 @@
 var Usuario = require('../models/usuario');
 var bcrypt = require('bcrypt-nodejs');
-var jwt = require('../helpers/jwt');
+var jwt =  require('../helpers/jwt');
+
 const registro_usuario_admin = async function(req,res){
-    if(req.user){        
+    if(req.user){
         let data = req.body;
+
         let usuarios = await Usuario.find({email: data.email});
-        if (usuarios.length >= 1){
-            res.status(200).send({data:undefined,message: 'El correo electronico ya existe'});
-        }else{        
+
+        if(usuarios.length >= 1){
+            res.status(200).send({data:undefined,message: 'El correo electrónico ya existe'});
+        }else{
             bcrypt.hash('123456',null,null, async function(err,hash){
                 if(err){
-                res.status(200).send({data:undefined,message: 'No se pudo encriptar la contraseña'});
+                    res.status(200).send({data:undefined,message: 'No se pudo encriptar la contraseña'});
                 }else{
                     data.password = hash;
                     let usuario = await Usuario.create(data);
                     res.status(200).send({data:usuario});
                 }
             });
-        } 
+        }
     }else{
         res.status(500).send({data:undefined,message: 'ErrorToken'});
-    }  
+    }
+
+
+    /*  */
 }
+
 const login_usuario = async function(req,res){
     var data = req.body;
+
     var usuarios = await Usuario.find({email: data.email});
+   
     if(usuarios.length >= 1){
         //CORREO EXISTE
         bcrypt.compare(data.password, usuarios[0].password, async function(err,check){
-            if(check){                
-                res.status(200).send({token:jwt.createToken(usuarios[0]),
-                usuario: usuarios[0]
+            if(check){
+                //
+                res.status(200).send({
+                    token:jwt.createToken(usuarios[0]),
+                    usuario: usuarios[0]
                 });
             }else{
                 res.status(200).send({data:undefined,message: 'La contraseña es incorrecta.'});
             }
+            
         });
     }else{
-        res.status(200).send({data:undefined,message: 'No se encuentra el correo electronico'});
+        res.status(200).send({data:undefined,message: 'No se encontró el correo electrónico.'});
     }
-} 
+}
+
+const listar_usuario_admin = async function(req,res){
+    if(req.user){
+
+        let filtro = req.params['filtro'];
+
+        let usuarios = await Usuario.find({
+            $or: [
+                {nombres: new RegExp(filtro,'i')},
+                {apellidos: new RegExp(filtro,'i')},
+                {email: new RegExp(filtro,'i')},
+            ]
+        });
+        res.status(200).send(usuarios);
+
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
 module.exports = {
     registro_usuario_admin,
-    login_usuario
+    login_usuario,
+    listar_usuario_admin
 }
