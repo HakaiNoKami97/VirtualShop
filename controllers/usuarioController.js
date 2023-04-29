@@ -90,9 +90,30 @@ const obtener_usuario_admin = async function(req,res){
     }
 }
 
+const actualizar_usuario_admin = async function(req,res){
+    if(req.user){
+
+        let id = req.params['id'];
+        let data = req.body;
+
+        let usuario=await Usuario.findByIdAndUpdate({_id:id},{
+            nombres: data.nombres,
+            apellidos: data.apellidos,
+            rol: data.rol,
+            email: data.email,
+        });
+
+        res.status(200).send(usuario);
+
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
 module.exports = {
     registro_usuario_admin,
     login_usuario,
     listar_usuario_admin,
-    obtener_usuario_admin
+    obtener_usuario_admin,
+    actualizar_usuario_admin
 }
