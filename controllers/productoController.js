@@ -207,11 +207,47 @@ const registro_variedad_producto = async (req,res)=>{
     }
 }
 
+
+const obtener_variedades_producto = async function(req,res){
+    if(req.user){
+
+       let id = req.params['id'];
+       let variedades = await Variedad.find({producto:id}).sort({stock:-1});
+       res.status(200).send(variedades);
+
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
+const eliminar_variedad_producto = async function(req,res){
+    if(req.user){
+
+       let id = req.params['id'];
+
+       let reg = await Variedad.findById({_id:id});
+
+       if(reg.stock == 0){
+            let variedad = await Variedad.findOneAndRemove({_id:id});
+            res.status(200).send(variedad);
+       }else{
+            res.status(200).send({data:undefined,message: 'No se puede eliminar esta variedad'});
+       }
+
+       
+
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
 module.exports = {
     registro_producto_admin,
     listar_productos_admin,
     obtener_portada_producto,
     obtener_producto_admin,
     actualizar_producto_admin,
-    registro_variedad_producto
+    registro_variedad_producto,
+    obtener_variedades_producto,
+    eliminar_variedad_producto
 }

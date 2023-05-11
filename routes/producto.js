@@ -10,4 +10,6 @@ api.get('/obtener_portada_producto/:img', productoController.obtener_portada_pro
 api.get('/obtener_producto_admin/:id', authenticate.decodeToken, productoController.obtener_producto_admin);
 api.put('/actualizar_producto_admin/:id', [authenticate.decodeToken, path], productoController.actualizar_producto_admin);
 api.post('/registro_variedad_producto', authenticate.decodeToken, productoController.registro_variedad_producto);
+api.get('/obtener_variedades_producto/:id', authenticate.decodeToken, productoController.obtener_variedades_producto);
+api.get('/eliminar_variedad_producto/:id', authenticate.decodeToken, productoController.eliminar_variedad_producto);
 module.exports = api;
