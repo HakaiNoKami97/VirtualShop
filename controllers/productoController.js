@@ -1,5 +1,7 @@
 var Producto = require('../models/producto');
 var Variedad = require('../models/variedad');
+var Ingreso = require('../models/ingreso');
+var Ingreso_detalle = require('../models/ingreso_detalle');
 var slugify = require('slugify');
 var fs = require('fs');
 var path = require('path');
@@ -241,6 +243,52 @@ const eliminar_variedad_producto = async function(req,res){
     }
 }
 
+const listar_activos_productos_admin = async function(req,res){
+    if(req.user){
+
+        let productos = await Producto.find({estado:true}).sort({createdAt:-1});
+        res.status(200).send(productos);
+
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
+const registro_ingreso_admin = async function(req,res){
+    if(req.user){
+
+        let data = req.body; //ingreso
+        try {
+            let detalles = JSON.parse(data.detalles); //detalles ingreso
+            console.log(detalles);
+
+            var img_path = req.files.documento.path;
+            var str_img = img_path.split('\\');
+            var str_documento = str_img[2];
+
+            data.documento = str_documento;
+            data.usuario = req.user.sub;
+            let ingreso = await Ingreso.create(data);
+
+            for(var item of detalles){
+                item.ingreso = ingreso._id;
+                await Ingreso_detalle.create(item);
+            }
+
+
+
+            res.status(200).send(ingreso);
+        } catch (error) {
+            res.status(200).send({message: 'No se puedo registrar el ingreso'});
+        }
+
+
+
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
 module.exports = {
     registro_producto_admin,
     listar_productos_admin,
@@ -249,5 +297,7 @@ module.exports = {
     actualizar_producto_admin,
     registro_variedad_producto,
     obtener_variedades_producto,
-    eliminar_variedad_producto
+    eliminar_variedad_producto,
+    listar_activos_productos_admin,
+    registro_ingreso_admin
 }
