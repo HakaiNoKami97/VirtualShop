@@ -357,6 +357,31 @@ const subir_imagen_producto_admin = async function(req,res){
     }
 }
 
+const obtener_galeria_producto = async function(req,res){
+    let img = req.params['img'];
+
+    fs.stat('./uploads/galeria/'+img,function(err){
+        if(err){
+            let path_img = './uploads/default.jpg';
+            res.status(200).sendFile(path.resolve(path_img));
+        }else{
+            let path_img = './uploads/galeria/'+img;
+            res.status(200).sendFile(path.resolve(path_img));
+        }
+    });
+}
+
+const obtener_galeria_producto_admin = async function(req,res){
+    if(req.user){
+        let id = req.params['id'];
+
+        let galeria = await Galeria.find({producto:id});
+        res.status(200).send(galeria);
+
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
 module.exports = {
     registro_producto_admin,
     listar_productos_admin,
@@ -368,5 +393,7 @@ module.exports = {
     eliminar_variedad_producto,
     listar_activos_productos_admin,
     registro_ingreso_admin,
-    subir_imagen_producto_admin
+    subir_imagen_producto_admin,
+    obtener_galeria_producto,
+    obtener_galeria_producto_admin
 }

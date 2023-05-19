@@ -17,4 +17,6 @@ api.get('/obtener_variedades_producto/:id', authenticate.decodeToken, productoCo
 api.delete('/eliminar_variedad_producto/:id', authenticate.decodeToken, productoController.eliminar_variedad_producto);
 api.post('/registro_ingreso_admin', [authenticate.decodeToken, path_ingreso], productoController.registro_ingreso_admin);
 api.post('/subir_imagen_producto_admin', [authenticate.decodeToken, path_galeria], productoController.subir_imagen_producto_admin);
+api.get('/obtener_galeria_producto/:img', productoController.obtener_galeria_producto);
+api.get('/obtener_galeria_producto_admin/:id', authenticate.decodeToken, productoController.obtener_galeria_producto_admin);
 module.exports = api;
