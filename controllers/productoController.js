@@ -259,6 +259,15 @@ const registro_ingreso_admin = async function(req,res){
 
         let data = req.body; //ingreso
         try {
+            
+            let reg_ingresos = await Ingreso.find().sort({createdAt:-1});
+
+            if(reg_ingresos.length == 0){
+                data.serie = 1;
+            }else{
+                data.serie = reg_ingresos[0].serie + 1;
+            }
+
             let detalles = JSON.parse(data.detalles); //detalles ingreso
             console.log(detalles);
 
@@ -273,12 +282,31 @@ const registro_ingreso_admin = async function(req,res){
             for(var item of detalles){
                 item.ingreso = ingreso._id;
                 await Ingreso_detalle.create(item);
+
+                //ACTUALIZAR CANTIDADES
+                let variedad = await Variedad.findById({_id: item.variedad});
+                await Variedad.findByIdAndUpdate({_id: item.variedad},{
+                    stock: parseInt(variedad.stock) + parseInt(item.cantidad)
+                });
+
+                let producto = await Producto.findById({_id: item.producto});
+                await Producto.findByIdAndUpdate({_id: item.producto},{
+                    stock: parseInt(producto.stock) + parseInt(item.cantidad)
+                });
+
+                //MARGEN DE GANANCIA
+                if(producto.stock >= 1){
+                    //
+                }else{
+                    let ganancia = Math.ceil((item.precio_unidad * data.ganancia)/100);
+                    await Producto.findByIdAndUpdate({_id: item.producto},{
+                        precio: parseFloat(item.precio_unidad) + parseFloat(ganancia)
+                    });
+                }
             }
-
-
-
             res.status(200).send(ingreso);
         } catch (error) {
+            console.log(error);
             res.status(200).send({message: 'No se puedo registrar el ingreso'});
         }
 
