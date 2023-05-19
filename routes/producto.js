@@ -19,4 +19,5 @@ api.post('/registro_ingreso_admin', [authenticate.decodeToken, path_ingreso], pr
 api.post('/subir_imagen_producto_admin', [authenticate.decodeToken, path_galeria], productoController.subir_imagen_producto_admin);
 api.get('/obtener_galeria_producto/:img', productoController.obtener_galeria_producto);
 api.get('/obtener_galeria_producto_admin/:id', authenticate.decodeToken, productoController.obtener_galeria_producto_admin);
+api.delete('/eliminar_galeria_producto_admin/:id', authenticate.decodeToken, productoController.eliminar_galeria_producto_admin);
 module.exports = api;
