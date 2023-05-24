@@ -9,7 +9,7 @@ const obtener_productos_recomendados = async function(req,res){
     res.status(200).send(productos);
 }
 const obtener_productos_shop = async function(req,res){
-    var productos = await Producto.find({estado:true});
+    var productos = await Producto.find({estado:true}).sort({createdAt:-1});
     res.status(200).send(productos);
 }
 
