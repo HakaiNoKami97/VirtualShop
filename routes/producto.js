@@ -21,4 +21,5 @@ api.get('/obtener_galeria_producto/:img', productoController.obtener_galeria_pro
 api.get('/obtener_galeria_producto_admin/:id', authenticate.decodeToken, productoController.obtener_galeria_producto_admin);
 api.delete('/eliminar_galeria_producto_admin/:id', authenticate.decodeToken, productoController.eliminar_galeria_producto_admin);
 api.post('/crear_categoria_admin', authenticate.decodeToken, productoController.crear_categoria_admin);
+api.get('/listar_categorias_admin', authenticate.decodeToken, productoController.listar_categorias_admin);
 module.exports = api;
