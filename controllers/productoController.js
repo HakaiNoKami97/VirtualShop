@@ -427,9 +427,6 @@ const crear_categoria_admin = async function(req,res){
         }else{
             res.status(200).send({data:undefined,message: 'La categoria ya existe.'});   
         }
-
-        
-
     }else{
         res.status(500).send({data:undefined,message: 'ErrorToken'});
     }
@@ -438,14 +435,57 @@ const crear_categoria_admin = async function(req,res){
 const listar_categorias_admin = async function(req,res){
     if(req.user){
 
-        var categorias = await Categoria.find().sort({titulo:1});
-        res.status(200).send(categorias);
-        
+        var regs = await Categoria.find().sort({titulo:1});
+        var categorias = [];
 
+        for(var item of regs){
+          
+            var subcategorias = await Subcategoria.find({categoria:item._id});
+            var productos = await Producto.find({categoria:item.titulo});
+
+            categorias.push({
+                categoria: item,
+                subcategorias,
+                nproductos: productos.length
+            });
+        }
+
+        res.status(200).send(categorias);
+    
     }else{
         res.status(500).send({data:undefined,message: 'ErrorToken'});
     }
 }
+
+const crear_subcategoria_admin = async function(req,res){
+    if(req.user){
+        let data = req.body;
+
+        var reg = await Subcategoria.find({titulo:data.titulo});
+
+        if(reg.length == 0){
+            var subcategoria = await Subcategoria.create(data);
+            res.status(200).send(subcategoria);
+        }else{
+            res.status(200).send({data:undefined,message: 'La subcategoria ya existe.'});   
+        }
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
+
+const eliminar_subcategoria_admin = async function(req,res){
+    if(req.user){
+        let id = req.params['id'];
+
+        var reg = await Subcategoria.findByIdAndRemove({_id:id});
+        res.status(200).send(reg);
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
 
 module.exports = {
     registro_producto_admin,
@@ -463,5 +503,7 @@ module.exports = {
     obtener_galeria_producto_admin,
     eliminar_galeria_producto_admin,
     crear_categoria_admin,
-    listar_categorias_admin
+    listar_categorias_admin,
+    crear_subcategoria_admin,
+    eliminar_subcategoria_admin
 }
