@@ -418,14 +418,18 @@ const crear_categoria_admin = async function(req,res){
     if(req.user){
         let data = req.body;
 
-        var reg = await Categoria.find({titulo:data.titulo});
+        try {
+            var reg = await Categoria.find({titulo:data.titulo});
 
-        if(reg.length == 0){
-            data.slug = slugify(data.titulo).toLowerCase();
-            var categoria = await Categoria.create(data);
-            res.status(200).send(categoria);
-        }else{
-            res.status(200).send({data:undefined,message: 'La categoria ya existe.'});   
+            if(reg.length == 0){
+                data.slug = slugify(data.titulo).toLowerCase();
+                var categoria = await Categoria.create(data);
+                res.status(200).send(categoria);
+            }else{
+                res.status(200).send({data:undefined,message: 'La categoria ya existe.'});   
+            }
+        } catch (error) {
+            res.status(200).send({data:undefined,message: 'Ocurrió un error durante el proceso.'});  
         }
     }else{
         res.status(500).send({data:undefined,message: 'ErrorToken'});
@@ -486,6 +490,30 @@ const eliminar_subcategoria_admin = async function(req,res){
     }
 }
 
+const cambiar_estado_producto_admin = async function(req,res){
+    if(req.user){
+
+        let id = req.params['id'];
+        let data = req.body;
+
+        let nuevo_estado = false;
+
+        if(data.estado){
+            nuevo_estado = false;
+        }else{
+            nuevo_estado = true;
+        }
+
+        let categoria = await Categoria.findByIdAndUpdate({_id:id},{
+            estado: nuevo_estado
+        });
+
+        res.status(200).send(categoria);
+
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
 
 module.exports = {
     registro_producto_admin,
@@ -505,5 +533,6 @@ module.exports = {
     crear_categoria_admin,
     listar_categorias_admin,
     crear_subcategoria_admin,
-    eliminar_subcategoria_admin
+    eliminar_subcategoria_admin,
+    cambiar_estado_producto_admin
 }
