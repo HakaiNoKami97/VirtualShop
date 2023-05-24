@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 var CategoriaSchema = Schema({
     titulo : {type: String, required: true},
+    slug : {type: String, required: true},
     estado : {type: Boolean, default: true, required: true},
     createdAt: {type: Date, default: Date.now}
 });
