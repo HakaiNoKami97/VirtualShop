@@ -14,9 +14,8 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
   // ...
-  socket.on('emit_method',function(data){
-    io.emit('semit_method',data);
-    console.log(data);
+  socket.on('send_cart',function(data){
+    io.emit('listen_cart',data);
   });
 });
 
