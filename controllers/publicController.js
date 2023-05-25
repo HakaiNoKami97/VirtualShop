@@ -68,10 +68,17 @@ const obtener_producto_slug = async function(req,res){
     res.status(200).send({producto,variedades,galeria});
 }
 
+const obtener_producto_categoria = async function(req,res){
+    var categoria = req.params['categoria'];
+    var productos = await Producto.find({categoria:categoria}).limit(6);
+    res.status(200).send({productos});
+}
+
 module.exports = {
     obtener_nuevos_productos,
     obtener_productos_recomendados,
     obtener_productos_shop,
     listar_categorias_public,
-    obtener_producto_slug
+    obtener_producto_slug,
+    obtener_producto_categoria
 }
