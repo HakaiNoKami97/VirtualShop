@@ -1,5 +1,6 @@
 var Carrito = require('../models/carrito');
 var Variedad = require('../models/variedad');
+var Direccion = require('../models/direccion');
 
 const crear_producto_carrito = async function(req,res){
     if(req.user){
@@ -46,9 +47,20 @@ const eliminar_producto_carrito = async function(req,res){
     }
 }
 
+const crear_direccion_cliente = async function(req,res){
+    if(req.user){
+       let data = req.body;
+       data.cliente = req.user.sub;
+       let direccion = await Direccion.create(data);
+       res.status(200).send(direccion);
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
 
 module.exports = {
     crear_producto_carrito,
     obtener_carrito_cliente,
-    eliminar_producto_carrito
+    eliminar_producto_carrito,
+    crear_direccion_cliente
 }
