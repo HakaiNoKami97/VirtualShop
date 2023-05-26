@@ -6,4 +6,5 @@ api.post('/crear_producto_carrito', cauthenticate.decodeToken, customerControlle
 api.get('/obtener_carrito_cliente', cauthenticate.decodeToken, customerController.obtener_carrito_cliente);
 api.delete('/eliminar_producto_carrito/:id', cauthenticate.decodeToken, customerController.eliminar_producto_carrito);
 api.post('/crear_direccion_cliente', cauthenticate.decodeToken, customerController.crear_direccion_cliente);
+api.get('/obternet_direcciones_cliente', cauthenticate.decodeToken, customerController.obternet_direcciones_cliente);
 module.exports = api;
