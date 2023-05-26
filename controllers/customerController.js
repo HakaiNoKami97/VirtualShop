@@ -1,6 +1,7 @@
 var Carrito = require('../models/carrito');
 var Variedad = require('../models/variedad');
 var Direccion = require('../models/direccion');
+var Venta = require('../models/venta');
 
 const crear_producto_carrito = async function(req,res){
     if(req.user){
@@ -78,6 +79,17 @@ const eliminar_direccion_cliente = async function(req,res){
     }
 }
 
+const validar_payment_id_venta = async function(req,res){
+    let payment_id = req.params['payment_id'];
+    let ventas = await Venta.find({transaccion:payment_id});
+    res.status(200).send(ventas);
+    /* if(req.user){
+       
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    } */
+}
+
 
 module.exports = {
     crear_producto_carrito,
@@ -85,5 +97,6 @@ module.exports = {
     eliminar_producto_carrito,
     crear_direccion_cliente,
     obternet_direcciones_cliente,
-    eliminar_direccion_cliente
+    eliminar_direccion_cliente,
+    validar_payment_id_venta
 }
