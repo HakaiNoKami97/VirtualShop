@@ -68,10 +68,22 @@ const obternet_direcciones_cliente = async function(req,res){
     }
 }
 
+const eliminar_direccion_cliente = async function(req,res){
+    if(req.user){
+       let id = req.params['id'];
+       let direccion = await Direccion.findByIdAndRemove({_id:id});
+       res.status(200).send(direccion);
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
+
 module.exports = {
     crear_producto_carrito,
     obtener_carrito_cliente,
     eliminar_producto_carrito,
     crear_direccion_cliente,
-    obternet_direcciones_cliente
+    obternet_direcciones_cliente,
+    eliminar_direccion_cliente
 }
