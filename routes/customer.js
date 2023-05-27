@@ -8,5 +8,6 @@ api.delete('/eliminar_producto_carrito/:id', cauthenticate.decodeToken, customer
 api.post('/crear_direccion_cliente', cauthenticate.decodeToken, customerController.crear_direccion_cliente);
 api.get('/obternet_direcciones_cliente', cauthenticate.decodeToken, customerController.obternet_direcciones_cliente);
 api.delete('/eliminar_direccion_cliente/:id', cauthenticate.decodeToken, customerController.eliminar_direccion_cliente);
-api.get('/validar_payment_id_venta/:payment_id', customerController.validar_payment_id_venta);
+api.get('/validar_payment_id_venta/:payment_id', cauthenticate.decodeToken, customerController.validar_payment_id_venta);
+api.post('/crear_venta_cliente', cauthenticate.decodeToken, customerController.crear_venta_cliente);
 module.exports = api;
