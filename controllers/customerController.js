@@ -136,7 +136,18 @@ const obtener_informacion_venta = async function(req,res){
     if(req.user){
         let id = req.params['id'];
         let venta = await Venta.findById({_id:id}).populate('cliente').populate('direccion');
-        let detalles = await Venta_detalle.find({venta:id}).populate('producto').populate('variedad');
+        let regs = await Venta_detalle.find({venta:id}).populate('producto').populate('variedad');
+        var detalles = [];
+
+        for(var item of regs){
+            let reviews = await Review.find({cliente: item.cliente, producto: item.producto._id});
+
+            detalles.push({
+                detalle: item,
+                reviews
+            });
+        }
+
         if(req.user.sub == venta.cliente._id){
             res.status(200).send({venta,detalles});
         }else{
@@ -165,8 +176,14 @@ const registrar_review_cliente = async function(req,res){
 
         data.cliente = req.user.sub;
 
-        let review = await Review.create(data);
-        res.status(200).send(review);
+        let regs = await Review.find({cliente: data.cliente, producto: data.producto});
+
+        if(regs.length == 0){
+            let review = await Review.create(data);
+            res.status(200).send(review);
+        }else{
+            res.status(200).send({data:undefined, message: 'Usted ya genero un comentario para el producto'});
+        }
     }else{
         res.status(500).send({data:undefined,message: 'ErrorToken'});
     }
