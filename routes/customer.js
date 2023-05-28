@@ -10,4 +10,5 @@ api.get('/obternet_direcciones_cliente', cauthenticate.decodeToken, customerCont
 api.delete('/eliminar_direccion_cliente/:id', cauthenticate.decodeToken, customerController.eliminar_direccion_cliente);
 api.get('/validar_payment_id_venta/:payment_id', cauthenticate.decodeToken, customerController.validar_payment_id_venta);
 api.post('/crear_venta_cliente', cauthenticate.decodeToken, customerController.crear_venta_cliente);
+api.get('/obtener_informacion_venta/:id', cauthenticate.decodeToken, customerController.obtener_informacion_venta);
 module.exports = api;

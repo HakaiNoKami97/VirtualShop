@@ -130,6 +130,21 @@ const crear_venta_cliente = async function(req,res){
     }
 }
 
+const obtener_informacion_venta = async function(req,res){
+   
+    if(req.user){
+        let id = req.params['id'];
+        let venta = await Venta.findById({_id:id}).populate('cliente');
+        let detalles = await Venta_detalle.find({venta:id}).populate('producto').populate('variedad');
+        if(req.user.sub == venta.cliente._id){
+            res.status(200).send({venta,detalles});
+        }else{
+            res.status(200).send({data:undefined,message: 'No tienes acceso a esta venta'});
+        }
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
 
 module.exports = {
     crear_producto_carrito,
@@ -139,5 +154,6 @@ module.exports = {
     obternet_direcciones_cliente,
     eliminar_direccion_cliente,
     validar_payment_id_venta,
-    crear_venta_cliente
+    crear_venta_cliente,
+    obtener_informacion_venta
 }
