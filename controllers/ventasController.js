@@ -19,6 +19,19 @@ const obtener_ventas_admin = async function(req,res){
     }
 }
 
+const obtener_detalles_venta_admin = async function(req,res){
+    if(req.user){
+        let id = req.params['id'];
+
+        var venta = await Venta.findById({_id:id}).populate('cliente');
+        var detalles = await Venta_detalle.find({venta:id}).populate('producto').populate('variedad');
+        res.status(200).send({venta,detalles});
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
 module.exports = {
-    obtener_ventas_admin
+    obtener_ventas_admin,
+    obtener_detalles_venta_admin
 }
