@@ -546,6 +546,18 @@ const obtener_comprobante_ingreso = async function(req,res){
     });
 }
 
+const obtener_detalles_ingreso_admin = async function(req,res){
+    if(req.user){
+        let id = req.params['id'];
+
+        var ingreso = await Ingreso.findById({_id:id});
+        var detalles = await Ingreso_detalle.find({ingreso:id}).populate('producto').populate('variedad');
+        res.status(200).send({ingreso,detalles});
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
 module.exports = {
     registro_producto_admin,
     listar_productos_admin,
@@ -567,5 +579,6 @@ module.exports = {
     eliminar_subcategoria_admin,
     cambiar_estado_producto_admin,
     obtener_ingresos_admin,
-    obtener_comprobante_ingreso
+    obtener_comprobante_ingreso,
+    obtener_detalles_ingreso_admin
 }
