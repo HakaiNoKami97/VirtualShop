@@ -515,6 +515,37 @@ const cambiar_estado_producto_admin = async function(req,res){
     }
 }
 
+const obtener_ingresos_admin = async function(req,res){
+    if(req.user){
+        let inicio = req.params['inicio'];
+        let hasta = req.params['hasta'];
+
+        var ingresos = await Ingreso.find({
+            createdAt: {
+                $gte: new Date(inicio+'T00:00:00'),
+                $lt:  new Date(hasta+'T00:00:00'),
+            }
+        });
+        res.status(200).send(ingresos);
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
+const obtener_comprobante_ingreso = async function(req,res){
+    let name = req.params['name'];
+
+    fs.stat('./uploads/facturas/'+name,function(err){
+        if(err){
+            let path_img = './uploads/default.jpg';
+            res.status(200).sendFile(path.resolve(path_img));
+        }else{
+            let path_img = './uploads/facturas/'+name;
+            res.status(200).sendFile(path.resolve(path_img));
+        }
+    });
+}
+
 module.exports = {
     registro_producto_admin,
     listar_productos_admin,
@@ -534,5 +565,7 @@ module.exports = {
     listar_categorias_admin,
     crear_subcategoria_admin,
     eliminar_subcategoria_admin,
-    cambiar_estado_producto_admin
+    cambiar_estado_producto_admin,
+    obtener_ingresos_admin,
+    obtener_comprobante_ingreso
 }
