@@ -3,6 +3,7 @@ var Variedad = require('../models/variedad');
 var Direccion = require('../models/direccion');
 var Venta = require('../models/venta');
 var Venta_detalle = require('../models/venta_detalle');
+var Review = require('../models/review');
 
 const crear_producto_carrito = async function(req,res){
     if(req.user){
@@ -134,13 +135,38 @@ const obtener_informacion_venta = async function(req,res){
    
     if(req.user){
         let id = req.params['id'];
-        let venta = await Venta.findById({_id:id}).populate('cliente');
+        let venta = await Venta.findById({_id:id}).populate('cliente').populate('direccion');
         let detalles = await Venta_detalle.find({venta:id}).populate('producto').populate('variedad');
         if(req.user.sub == venta.cliente._id){
             res.status(200).send({venta,detalles});
         }else{
             res.status(200).send({data:undefined,message: 'No tienes acceso a esta venta'});
         }
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
+const obtener_ventas_cliente = async function(req,res){
+   
+    if(req.user){
+   
+        let ventas = await Venta.find({cliente:req.user.sub}).populate('cliente').populate('direccion');
+        res.status(200).send(ventas);
+    }else{
+        res.status(500).send({data:undefined,message: 'ErrorToken'});
+    }
+}
+
+const registrar_review_cliente = async function(req,res){
+    if(req.user){
+
+        let data = req.body;
+
+        data.cliente = req.user.sub;
+
+        let review = await Review.create(data);
+        res.status(200).send(review);
     }else{
         res.status(500).send({data:undefined,message: 'ErrorToken'});
     }
@@ -155,5 +181,7 @@ module.exports = {
     eliminar_direccion_cliente,
     validar_payment_id_venta,
     crear_venta_cliente,
-    obtener_informacion_venta
+    obtener_informacion_venta,
+    obtener_ventas_cliente,
+    registrar_review_cliente
 }
